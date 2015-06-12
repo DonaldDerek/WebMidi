@@ -1,75 +1,19 @@
-(function () {
-        navigator.requestMIDIAccess().then( onMIDISuccess, onMIDIFailure );
+var WebMidi = function(midiAccess, portID){
+    var port = portID || "-1047472486";
+    this.access = midiAccess || null;
+    this.port = port;
 
-        var portID = '-1047472486';
-
-        function onMIDISuccess( midiAccess ) {
-            init(midiAccess);
-        }
-
-        function onMIDIFailure(msg) {
-            console.log( "Failed to get MIDI access - " + msg );
-        }
-
-        function playMidi( midiAccess, note, decay ) {
-            var noteOnMessage = [0x90, note[0], 127];
-            var output = midiAccess.outputs.get(portID);
-            output.send( noteOnMessage );
-            //output.send( [0x80, note[1], 127], window.performance.now() + decay );
-        }
-
-        function init(midi){
-            var nc=0;
-            document.getElementById("bang").addEventListener("click", function(e){
-                console.log(nc);
-                nc++
-                playMidi(midi,[50+nc,60],1000.00);
-
-            },false)
-
-        }
-}());
-
-
-
-//WebMidi.midi;
-//WebMidi.foo;
-/*
-(function(){
-
-    // global MIDIAccess object
-    var midi = null;
-
-
-    navigator.requestMIDIAccess().then( onMIDISuccess, onMIDIFailure );
-
-    function onMIDISuccess( midiAccess ) {
-        console.log( "MIDI ready!" );
-        // store in the global (in real usage, would probably keep in an object instance)
-        midi = midiAccess;
-        listInputsAndOutputs(midi)
-        sendMiddleC(midi, '-1047472486');
-    }
-
-    function onMIDIFailure(msg) {
-        console.log( "Failed to get MIDI access - " + msg );
-    }
-
-    function sendMiddleC( midiAccess, portID ) {
-        // note on, middle C, full velocity
-        var noteOnMessage = [0x90, 60, 0x7f];
-        var output = midiAccess.outputs.get(portID);
-
-        //omitting the timestamp means send immediately.
+    this.playNote= function(note, decay) {
+        var noteOnMessage = [144, note[0], 127];
+        var noteOffMessage = [128, note[1], 127];
+        var output = midiAccess.outputs.get(port);
         output.send( noteOnMessage );
-
-        // Inlined array creation- note off, middle C,
-        // release velocity = 64, timestamp = now + 1000ms.
-        output.send( [0x80, 70, 100], window.performance.now() + 1000.0 );
+        console.log("MIDI OUT: " + noteOnMessage);
+        output.send( noteOffMessage, window.performance.now() + decay );
+        console.log("MIDI OUT: " + noteOffMessage);
     }
 
-    // Print list of the input and output ports
-    function listInputsAndOutputs( midiAccess ) {
+    this.listIO = function () {
         for (var entry of midiAccess.inputs) {
             var input = entry[1];
             console.log( "Input port [type:'" + input.type + "'] id:'" + input.id +
@@ -85,6 +29,26 @@
         }
     }
 
+    this.setPort = function(port){
+        this.port = port;
+    }
+    this.getPort = function(){
+        console.log(this.port)
+    }
+}
 
-})();
-*/
+navigator.requestMIDIAccess().then( function(midiAccess){
+    var midi = new WebMidi(midiAccess);
+    init(midi);
+
+}, function(err){
+    console.log( "Failed to get MIDI access - " + msg );
+});
+
+
+function init(midi){
+    midi.playNote([50,60],1000.00);
+    midi.listIO();
+    midi.setPort('1509866472');
+    midi.getPort();
+}
