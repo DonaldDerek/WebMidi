@@ -61,15 +61,15 @@ function init(midi){
     //midi.send([128,62,127],1000.00)
     //midi.send([144,62,127],2000.00)
     //midi.send([128,62,127],3000.00)
-    $("#bang").on('click', function(){
-        var hit = (Math.floor(Math.random()*3)+5)*10
-        var duration = (Math.floor(Math.random()*10)+1)*10
-        console.log(hit);
-        for (var i=0; i < duration; i++){
-            var note =  Math.floor(Math.random()*12)+hit;
-            var velocity =  Math.floor(Math.random()*77)+30;
-            midi.send([144,note,velocity],i*1000.00);
-            midi.send([128,note,velocity],(i+1)*1000.00);
-        }
-    })
+    // $("#bang").on('click', function(){
+    //     var hit = (Math.floor(Math.random()*3)+5)*10
+    //     var duration = (Math.floor(Math.random()*10)+1)*10
+    //     console.log(hit);
+    //     for (var i=0; i < duration; i++){
+    //         var note =  Math.floor(Math.random()*12)+hit;
+    //         var velocity =  Math.floor(Math.random()*77)+30;
+    //         midi.send([144,note,velocity],i*1000.00);
+    //         midi.send([128,note,velocity],(i+1)*1000.00);
+    //     }
+    // })
 }
